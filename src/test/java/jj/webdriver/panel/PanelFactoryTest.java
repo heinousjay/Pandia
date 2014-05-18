@@ -22,13 +22,13 @@ import static org.junit.Assert.*;
 import static org.mockito.BDDMockito.*;
 import jj.webdriver.Page;
 import jj.webdriver.WebElementFinder;
+import jj.webdriver.generator.PanelMethodGeneratorsModule;
 import jj.webdriver.pages.TestModel;
 import jj.webdriver.pages.TestPage;
 import jj.webdriver.pages.TestPage2;
 import jj.webdriver.panel.PanelBase;
 import jj.webdriver.panel.PanelFactory;
 import jj.webdriver.panel.URLBase.BaseURL;
-import jj.webdriver.panel.generator.PanelMethodGeneratorsModule;
 
 import org.junit.Before;
 import org.junit.Test;

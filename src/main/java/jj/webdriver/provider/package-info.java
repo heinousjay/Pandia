@@ -13,24 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jj.webdriver;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.lang.annotation.ElementType;
-
 /**
- * The URL of the page, relative to the configured base.  Defines 
+ * <p>
+ * Simple {@link jj.webdriver.WebDriverProvider} implementations.  Use of
+ * {@link jj.webdriver.provider.PhantomJSWebDriverProvider} requires that
+ * the phantomjs binary is available and executable, and that the path to
+ * the executable is supplied via a system property.
+ * 
+ * <p>
+ * Coming soon, probably, is a Chrome driver provider that works much like
+ * the phantomjs driver.
  * 
  * @author jason
  *
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@Documented
-public @interface URL {
-
-	String value();
-}
+package jj.webdriver.provider;

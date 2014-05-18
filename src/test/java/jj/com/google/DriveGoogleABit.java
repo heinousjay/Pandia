@@ -16,8 +16,8 @@
 package jj.com.google;
 
 import static org.junit.Assert.*;
-import jj.webdriver.PhantomJSWebDriverProvider;
 import jj.webdriver.WebDriverRule;
+import jj.webdriver.provider.PhantomJSWebDriverProvider;
 
 import org.junit.Rule;
 import org.junit.Test;

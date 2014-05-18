@@ -28,8 +28,10 @@ import org.openqa.selenium.WebDriver;
  * 
  * <p>
  * Implementations are welcome to use {@literal @}{@link Inject}
- * annotations to have dependencies injected - that might not be
- * too useful yet though
+ * annotations to have dependencies injected.  The instance will
+ * be constructed using <a href="https://code.google.com/p/google-guice/">Guice</a>
+ * so if you can make use of that info to deal with injections,
+ * BAM
  * 
  * @author jason
  *

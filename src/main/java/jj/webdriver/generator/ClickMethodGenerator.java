@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jj.webdriver.panel.generator;
+package jj.webdriver.generator;
 
 import java.util.regex.Pattern;
 
@@ -24,29 +24,35 @@ import jj.webdriver.By;
 import jj.webdriver.panel.PanelMethodGenerator;
 
 /**
+ * <p>
+ * Generates an implementation for a method matching a pattern defined as
+ * 
+ * <ul>
+ * <li>Annotated with {@link By}
+ * <li>A method name starting with "click" followed by a capital letter, a number, an underscore, or $
+ * <li>Zero parameters
+ * <li>The standard return
+ * </ul>
+ * 
  * @author jason
  *
  */
+// test coverage by jj.webdriver.PageFactoryTest
 @Singleton
-class ReadMethodGenerator extends PanelMethodGenerator {
+class ClickMethodGenerator extends PanelMethodGenerator {
 	
-	private static final Pattern NAME = makeNamePattern("read");
-	
+	private static final Pattern NAME = makeNamePattern("click");
+
 	@Override
 	protected boolean matches(CtMethod newMethod, CtMethod baseMethod) throws Exception {
 		return hasBy(baseMethod) &&
 			NAME.matcher(newMethod.getName()).find() &&
 			parametersMatchByAnnotation(0, newMethod, baseMethod) &&
-			newMethod.getReturnType().getName().equals("java.lang.String");
+			isStandardReturn(newMethod);
 	}
 
 	@Override
-	protected void generateMethod(CtMethod newMethod, CtMethod baseMethod) throws Exception {
-		StringBuilder sb = new StringBuilder("{");
-		processBy((By)baseMethod.getAnnotation(By.class), LOCAL_BY, 0, sb);
-		sb.append("return read(").append(LOCAL_BY).append(");");
-		sb.append("}");
-		setBody(newMethod, sb);
+	protected void generate(CtMethod newMethod, CtMethod baseMethod, StringBuilder sb) throws Exception {
+		sb.append("click(").append(LOCAL_BY).append(");");
 	}
-	
 }

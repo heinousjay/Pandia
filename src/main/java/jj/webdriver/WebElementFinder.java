@@ -20,6 +20,10 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 /**
+ * the ultimate delegation for finding a web element
+ * in a given web driver.  Use this to decide timings
+ * and so forth
+ * 
  * @author jason
  *
  */

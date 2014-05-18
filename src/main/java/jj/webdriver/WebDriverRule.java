@@ -24,10 +24,12 @@ import java.nio.file.Paths;
 
 import javax.inject.Singleton;
 
+import jj.webdriver.finder.ImpatientWebElementFinder;
+import jj.webdriver.generator.PanelMethodGeneratorsModule;
 import jj.webdriver.panel.PanelBase;
 import jj.webdriver.panel.PanelFactory;
 import jj.webdriver.panel.URLBase.BaseURL;
-import jj.webdriver.panel.generator.PanelMethodGeneratorsModule;
+import jj.webdriver.provider.PhantomJSWebDriverProvider;
 
 import org.apache.commons.codec.binary.Base64;
 import org.junit.Rule;

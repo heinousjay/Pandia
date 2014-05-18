@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jj.webdriver;
+package jj.webdriver.finder;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import jj.webdriver.WebElementFinder;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;

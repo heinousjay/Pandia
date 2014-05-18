@@ -18,12 +18,13 @@
  * Provides test facilities to drive in-browser testing of web apps
  * 
  * <p>
- * The main entry point to this API is {@link jj.webdriver.WebDriverRule}
+ * The main entry point to this API is {@link jj.webdriver.WebDriverRule}. An
+ * instance of this rule will manage a {@link org.openqa.selenium.WebDriver} for
+ * you, and provide a factory for page objects
  * 
  * <p>
- * Customizing the behavior involves adding {@link jj.webdriver.panel.PanelMethodGenerator}
- * classes to the generation system, and potentially extending {@link jj.webdriver.panel.PanelBase}
- * with additional base functionality.
+ * Declare sets of interfaces descending from {@link jj.webdriver.Page}/{@link jj.webdriver.Panel}
+ * that describe how to navigate your target site.
  * 
  * @author jason
  *

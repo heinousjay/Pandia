@@ -13,23 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jj.webdriver;
+package jj.webdriver.generator;
 
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import jj.webdriver.panel.PanelMethodGenerator;
+
+import com.google.inject.Binder;
+import com.google.inject.binder.ScopedBindingBuilder;
+import com.google.inject.multibindings.Multibinder;
 
 /**
- * Provides a very basic all-defaults version of the {@link FirefoxDriver}
- * 
  * @author jason
  *
  */
-public class FirefoxWebDriverProvider implements WebDriverProvider {
-
-	@Override
-	public WebDriver get() {
-		return new FirefoxDriver(DesiredCapabilities.firefox());
+class PanelMethodGeneratorBinder {
+	
+	private final Multibinder<PanelMethodGenerator> generatorBinder;
+	
+	PanelMethodGeneratorBinder(Binder binder) {
+		generatorBinder = Multibinder.newSetBinder(binder, PanelMethodGenerator.class);
 	}
-
+	
+	ScopedBindingBuilder to(Class<? extends PanelMethodGenerator> generator) {
+		return generatorBinder.addBinding().to(generator);
+	}
 }
