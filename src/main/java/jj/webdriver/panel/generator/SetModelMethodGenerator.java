@@ -22,8 +22,8 @@ import javax.inject.Singleton;
 import javassist.CtField;
 import javassist.CtMethod;
 import jj.webdriver.By;
-import jj.webdriver.ByReader;
 import jj.webdriver.Model;
+import jj.webdriver.panel.ByReader;
 import jj.webdriver.panel.ByStack;
 import jj.webdriver.panel.PanelMethodGenerator;
 
@@ -32,7 +32,7 @@ import jj.webdriver.panel.PanelMethodGenerator;
  *
  */
 @Singleton
-public class SetModelMethodGenerator extends PanelMethodGenerator {
+class SetModelMethodGenerator extends PanelMethodGenerator {
 	
 	private static final Pattern NAME = makeNamePattern("set");
 

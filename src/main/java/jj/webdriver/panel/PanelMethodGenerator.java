@@ -21,7 +21,6 @@ import java.util.regex.Pattern;
 import javassist.CtClass;
 import javassist.CtMethod;
 import jj.webdriver.By;
-import jj.webdriver.ByReader;
 import jj.webdriver.Page;
 import jj.webdriver.Panel;
 

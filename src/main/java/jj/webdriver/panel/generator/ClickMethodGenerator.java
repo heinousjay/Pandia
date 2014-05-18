@@ -17,6 +17,8 @@ package jj.webdriver.panel.generator;
 
 import java.util.regex.Pattern;
 
+import javax.inject.Singleton;
+
 import javassist.CtMethod;
 import jj.webdriver.By;
 import jj.webdriver.panel.PanelMethodGenerator;
@@ -36,6 +38,7 @@ import jj.webdriver.panel.PanelMethodGenerator;
  *
  */
 // test coverage by jj.webdriver.PageFactoryTest
+@Singleton
 class ClickMethodGenerator extends PanelMethodGenerator {
 	
 	private static final Pattern NAME = makeNamePattern("click");

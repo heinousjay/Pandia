@@ -17,6 +17,8 @@ package jj.webdriver.panel.generator;
 
 import java.util.regex.Pattern;
 
+import javax.inject.Singleton;
+
 import javassist.CtMethod;
 import jj.webdriver.panel.PanelMethodGenerator;
 
@@ -24,6 +26,7 @@ import jj.webdriver.panel.PanelMethodGenerator;
  * @author jason
  *
  */
+@Singleton
 class SetInputMethodGenerator extends PanelMethodGenerator {
 	
 	private static final Pattern NAME = makeNamePattern("set");

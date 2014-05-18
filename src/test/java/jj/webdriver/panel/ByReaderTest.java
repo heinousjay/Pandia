@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jj.webdriver;
+package jj.webdriver.panel;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
 
 import java.lang.annotation.Annotation;
+
+import jj.webdriver.By;
+import jj.webdriver.panel.ByReader;
 
 import org.junit.Test;
 

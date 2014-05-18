@@ -13,19 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package jj.com.google;
+
+import static org.junit.Assert.*;
+import jj.webdriver.PhantomJSWebDriverProvider;
+import jj.webdriver.WebDriverRule;
+
+import org.junit.Rule;
+import org.junit.Test;
+
 /**
- * <p>
- * Provides test facilities to drive in-browser testing of web apps
- * 
- * <p>
- * The main entry point to this API is {@link jj.webdriver.WebDriverRule}
- * 
- * <p>
- * Customizing the behavior involves adding {@link jj.webdriver.panel.PanelMethodGenerator}
- * classes to the generation system, and potentially extending {@link jj.webdriver.panel.PanelBase}
- * with additional base functionality.
- * 
  * @author jason
  *
  */
-package jj.webdriver;
+public class DriveGoogleABit {
+	
+	@Rule
+	public WebDriverRule driver = new WebDriverRule()
+		.driverProvider(PhantomJSWebDriverProvider.class)
+		.baseUrl("https://google.com");
+
+	@Test
+	public void test() throws Exception {
+		driver.get(Index.class).setQuery("selenium").clickSearch();
+		
+		driver.takeScreenshot();
+		
+	}
+
+}

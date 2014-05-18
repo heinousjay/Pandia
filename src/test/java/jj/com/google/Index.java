@@ -13,19 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package jj.com.google;
+
+import jj.webdriver.By;
+import jj.webdriver.Page;
+import jj.webdriver.URL;
+
 /**
- * <p>
- * Provides test facilities to drive in-browser testing of web apps
- * 
- * <p>
- * The main entry point to this API is {@link jj.webdriver.WebDriverRule}
- * 
- * <p>
- * Customizing the behavior involves adding {@link jj.webdriver.panel.PanelMethodGenerator}
- * classes to the generation system, and potentially extending {@link jj.webdriver.panel.PanelBase}
- * with additional base functionality.
- * 
  * @author jason
  *
  */
-package jj.webdriver;
+@URL("/")
+public interface Index extends Page {
+
+	@By(cssSelector = "input[name=q]")
+	public Index setQuery(String query);
+	
+	@By(cssSelector = "input[name=btnG]")
+	public Index clickSearch();
+}

@@ -15,6 +15,8 @@
  */
 package jj.webdriver.panel.generator;
 
+import javax.inject.Singleton;
+
 import javassist.CtMethod;
 import jj.webdriver.By;
 import jj.webdriver.Panel;
@@ -25,6 +27,7 @@ import jj.webdriver.panel.PanelMethodGenerator;
  * @author jason
  *
  */
+@Singleton
 class GetPanelMethodGenerator extends PanelMethodGenerator {
 	
 	

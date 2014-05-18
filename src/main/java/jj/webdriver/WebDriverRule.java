@@ -196,8 +196,6 @@ public class WebDriverRule implements TestRule {
 	 * Configure the base URL for the test run.  URLs are determined with simple
 	 * concatenation - the URL configured for a Page interface is appended to
 	 * the value configured here. Default is "http://localhost:8080"
-	 * @param baseUrl
-	 * @return
 	 */
 	public WebDriverRule baseUrl(final String baseUrl) {
 		assertUnstarted();
@@ -213,9 +211,6 @@ public class WebDriverRule implements TestRule {
 	 * 
 	 * <p>
 	 * The provider will be bound as a singleton
-	 * 
-	 * @param webDriverProvider
-	 * @return
 	 */
 	public WebDriverRule driverProvider(Class<? extends WebDriverProvider> webDriverProvider) {
 		assertUnstarted();
@@ -254,8 +249,6 @@ public class WebDriverRule implements TestRule {
 	 * Takes a screenshot of the current state of the browser, if possible according to the
 	 * current driver, and stores it in the current directory, which is dependent upon
 	 * test invocation
-	 * @param dir
-	 * @throws IOException
 	 */
 	public void takeScreenshot() throws IOException {
 		takeScreenshot(makeScreenShotName("screenshot"));
@@ -264,8 +257,6 @@ public class WebDriverRule implements TestRule {
 	/**
 	 * Takes a screenshot of the current state of the browser, if possible according to the
 	 * current driver, and stores it in the directory given
-	 * @param dir
-	 * @throws IOException
 	 */
 	public void takeScreenshot(String screenshotName) throws IOException {
 		
@@ -306,10 +297,6 @@ public class WebDriverRule implements TestRule {
 		return injector.getInstance(PanelFactory.class).create(pageInterface);
 	}
 
-	/**
-	 * @param b
-	 * @return
-	 */
 	public WebDriverRule screenshotOnError(boolean screenshotOnError) {
 		this.screenshotOnError = screenshotOnError;
 		return this;

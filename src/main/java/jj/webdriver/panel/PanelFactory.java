@@ -38,7 +38,8 @@ import jj.webdriver.URL;
 import com.google.inject.Injector;
 
 /**
- * produces page objects according to
+ * produces page objects according to the declarations
+ * in a {@link Panel} interface
  * 
  * @author jason
  *
@@ -81,9 +82,6 @@ public class PanelFactory {
 	/**
 	 * creates a page instance by type.  it is expected that the connected browser is already
 	 * on the configured URL, and this might even get asserted!
-	 * @param panelInterface
-	 * @return
-	 * @throws Exception
 	 */
 	public <T extends Panel> T create(final Class<T> panelInterface) {
 		
