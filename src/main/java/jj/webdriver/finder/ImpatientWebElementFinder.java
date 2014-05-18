@@ -49,7 +49,7 @@ public class ImpatientWebElementFinder implements WebElementFinder {
 	
 	@Override
 	public WebElement find(final WebDriver webDriver, final By by) {
-		int tries = 2;
+		int tries = 1;
 		do {
 			try {
 				new WebDriverWait(webDriver, 3).until(new Predicate<WebDriver>() {
