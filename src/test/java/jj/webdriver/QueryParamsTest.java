@@ -15,27 +15,31 @@
  */
 package jj.webdriver;
 
+import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.*;
+import static jj.webdriver.QueryParams.query;
+
+import org.junit.Test;
+
 /**
- * <p>
- * A specialized type of {@link Panel} that triggers/follows navigation, and is
- * intended to contain Panels as well as interaction method.
- * 
- * <p>
- * Extensions of this interface are required to be annotated with {@link URL}, which
- * should identify the path to which this page is associated.  query strings are
- * specified via the call to {@link WebDriverRule#get(Class, Object...)}.
- * 
- * <p>
- * When a page is created
- * 
  * @author jason
  *
  */
-public interface Page extends Panel {
-	
-	/** The current URL of the underlying page */
-	String currentUrl();
-	
-	/** The source of the underlying page */
-	String pageSource();
+public class QueryParamsTest {
+
+	@Test
+	public void test() {
+		assertThat(query("name1", "value1").toString(), is("name1=value1"));
+		
+		assertThat(
+			query("i have spaces", "and so do i").and("name2", "value2").toString(),
+			is("i+have+spaces=and+so+do+i&name2=value2")
+		);
+		
+		assertThat(
+			query("something","nothing").and(query("other thing", "everything")).toString(),
+			is("something=nothing&other+thing=everything")
+		);
+	}
+
 }

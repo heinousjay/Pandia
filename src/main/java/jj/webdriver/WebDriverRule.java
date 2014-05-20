@@ -15,12 +15,15 @@
  */
 package jj.webdriver;
 
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 import javax.inject.Singleton;
 
@@ -98,8 +101,6 @@ public class WebDriverRule implements TestRule {
 	
 	private boolean screenshotOnError = true;
 	
-	private int screenShotCount;
-	
 	private Logger logger = null;
 	
 	private Injector injector = null;
@@ -138,10 +139,12 @@ public class WebDriverRule implements TestRule {
 				webDriver = injector.getInstance(WebDriver.class);
 				
 				try {
+				
 					logger.info(SEPARATOR);
 					logger.info("beginning {}.{}", description.getClassName(), description.getMethodName());
 					logger.info("using driver {}", webDriver);
 					base.evaluate();
+				
 				} catch (Throwable t) {	
 					
 					logger.error("TEST ENDED IN ERROR", t);
@@ -160,7 +163,6 @@ public class WebDriverRule implements TestRule {
 					webDriver = null;
 					injector = null;
 					logger = null;
-					screenShotCount = 0;
 				}
 			}
 		};
@@ -257,8 +259,12 @@ public class WebDriverRule implements TestRule {
 	}
 	
 	/**
+	 * <p>
 	 * Takes a screenshot of the current state of the browser, if possible according to the
-	 * current driver, and stores it in the directory given
+	 * current driver, and stores it in the screenshot directory using the given name.
+	 * 
+	 * <p>
+	 * If the file already exists, it is overwritten
 	 */
 	public void takeScreenshot(String screenshotName) throws IOException {
 		
@@ -266,35 +272,84 @@ public class WebDriverRule implements TestRule {
 		
 		if (webDriver instanceof TakesScreenshot) {
 		
-			Path screenshot = ((TakesScreenshot)webDriver).getScreenshotAs(OutputType.FILE).toPath();
+			byte[] screenshot = ((TakesScreenshot)webDriver).getScreenshotAs(OutputType.BYTES);
 			Path restingPlace = screenshotDir.resolve(screenshotName);
-			Files.copy(screenshot, restingPlace, REPLACE_EXISTING);
+			Files.write(restingPlace, screenshot);
 			
 			logger.info("saved {}", restingPlace);
 		}
 	}
 
-	private String makeScreenShotName(String base) {
-		return String.format("%s-%d-%s.%s.png",
+	/**
+	 * Helper method to make a screenshot name in the format:
+	 * <pre>
+	 * ${base}-${test class name}.${test method name}[${year}.${month}.${day}.${hour}.${minute}.${second}.${millisecond}].png
+	 * </pre>
+	 * 
+	 * @param base
+	 * @return
+	 */
+	public String makeScreenShotName(String base) {
+		
+		Calendar now = Calendar.getInstance();
+		
+		return String.format("%s-%s.%s[%d.%d.%d.%d.%d.%d.%d].png",
 			base,
-			++screenShotCount,
 			currentDescription.getClassName(),
-			currentDescription.getMethodName()
+			currentDescription.getMethodName(),
+			now.get(Calendar.YEAR),
+			now.get(Calendar.MONTH) + 1, // ANNOYING
+			now.get(Calendar.DATE),
+			now.get(Calendar.HOUR_OF_DAY),
+			now.get(Calendar.MINUTE),
+			now.get(Calendar.SECOND),
+			now.get(Calendar.MILLISECOND)
 		);
 	}
 	
-	public <T extends Page> T get(final Class<T> pageInterface) {
+	private String makeURL(String inputURL, Object...queryObjects) {
 		
-		return get(pageInterface, null);
+		List<Object> formatArgs = new ArrayList<>();
+		QueryParams queryParams = null;
+		if (queryObjects != null) {
+			for (Object queryObject : queryObjects) {
+				if (queryObject instanceof QueryParams) {
+					queryParams = queryParams == null ? (QueryParams)queryObject : queryParams.and((QueryParams)queryObject);
+				} else if (queryObject instanceof String) {
+					try {
+						formatArgs.add(URLEncoder.encode((String)queryObject, "UTF-8"));
+					} catch (UnsupportedEncodingException e) { /* can't happen */ }
+				} else if (queryObject instanceof Number) {
+					formatArgs.add(queryObject);
+				} else {
+					logger.error("got a querystring argument that makes no sense, {}", queryObject);
+				}
+			}
+		}
+		String url = String.format(inputURL, formatArgs.toArray()); 
+		
+		if (queryParams != null) {
+			url = url + (url.contains("?") ? "&" : "?") + queryParams;
+		}
+		
+		return url;
 	}
 	
-	public <T extends Page> T get(final Class<T> pageInterface, final String queryString) {
+	/**
+	 * <p>
+	 * 
+	 * 
+	 * @param pageInterface
+	 * @param queryObjects
+	 * @return
+	 */
+	public <T extends Page> T get(final Class<T> pageInterface, final Object...queryObjects) {
 		
 		assert webDriver != null : "cannot get a page outside of a test";
 		
 		assert pageInterface.getAnnotation(URL.class) != null : "page declarations must have a URL annotation";
 		
-		webDriver.get(baseUrl + pageInterface.getAnnotation(URL.class).value());
+		webDriver.get(makeURL(baseUrl + pageInterface.getAnnotation(URL.class).value(), queryObjects));
 		
 		return injector.getInstance(PanelFactory.class).create(pageInterface);
 	}

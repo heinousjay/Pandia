@@ -15,11 +15,8 @@
  */
 package jj.webdriver.panel;
 
-import java.net.URI;
-
 import jj.webdriver.Page;
 import jj.webdriver.Panel;
-import jj.webdriver.URL;
 import jj.webdriver.WebElementFinder;
 
 import org.openqa.selenium.By;
@@ -100,8 +97,6 @@ public abstract class PanelBase implements Page {
 	}
 	
 	<T extends Page> T navigateTo(Class<T> pageInterface) {
-		String url = pageInterface.getAnnotation(URL.class).value();
-		URI uri = URI.create(webDriver.getCurrentUrl());
 		
 		// if the URL doesn't match, log it?
 		return panelFactory.create(pageInterface);

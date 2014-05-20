@@ -15,32 +15,59 @@
  */
 package jj.webdriver;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+
 /**
  * @author jason
  *
  */
 public class QueryParams {
 	
+	private static final class Pair {
+		final String name;
+		final String value;
+		
+		Pair(String name, String value) {
+			try {
+				this.name = URLEncoder.encode(name, "UTF-8");
+				this.value = URLEncoder.encode(value, "UTF-8");
+			} catch (UnsupportedEncodingException uee) {
+				throw new AssertionError(uee); // cant happen
+			} 
+		}
+	}
+	
 	public static QueryParams query(String name, String value) {
 		QueryParams result = new QueryParams();
 		
-		return result.add(name, value);
+		return result.and(name, value);
+	}
+	
+	private final ArrayList<Pair> pairs = new ArrayList<>();
+
+	private QueryParams() {}
+
+	public QueryParams and(String name, String value) {
+		pairs.add(new Pair(name, value));
+		return this;
 	}
 
-	/**
-	 * 
-	 */
-	private QueryParams() {
-		
-	}
-
-	public QueryParams add(String name, String value) {
-		
+	public QueryParams and(QueryParams queryParams) {
+		for (Pair pair : queryParams.pairs) {
+			pairs.add(pair);
+		}
 		return this;
 	}
 	
-	public QueryParams add(QueryParams queryParams) {
-		
-		return this;
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for (Pair pair : pairs) {
+			sb.append(pair.name).append("=").append(pair.value).append("&");
+		}
+		sb.deleteCharAt(sb.length() - 1);
+		return sb.toString();
 	}
 }

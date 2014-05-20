@@ -22,7 +22,11 @@ import java.lang.annotation.Target;
 import java.lang.annotation.ElementType;
 
 /**
- * The URL of the page, relative to the configured base.  Defines 
+ * <p>
+ * The URL of the page, relative to the base url defined in the rule,
+ * expressed as a format string.
+ * 
+ * @see {@link WebDriverRule#get(Class, Object...)}
  * 
  * @author jason
  *
