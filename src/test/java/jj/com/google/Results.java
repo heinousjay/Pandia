@@ -15,6 +15,7 @@
  */
 package jj.com.google;
 
+import jj.webdriver.By;
 import jj.webdriver.Page;
 import jj.webdriver.URL;
 
@@ -25,4 +26,6 @@ import jj.webdriver.URL;
 @URL("/search?q=%s")
 public interface Results extends Page {
 
+	@By(cssSelector = "input[name=q]")
+	String readQuery();
 }

@@ -285,9 +285,6 @@ public class WebDriverRule implements TestRule {
 	 * <pre>
 	 * ${base}-${test class name}.${test method name}[${year}.${month}.${day}.${hour}.${minute}.${second}.${millisecond}].png
 	 * </pre>
-	 * 
-	 * @param base
-	 * @return
 	 */
 	public String makeScreenShotName(String base) {
 		
@@ -337,19 +334,32 @@ public class WebDriverRule implements TestRule {
 	
 	/**
 	 * <p>
+	 * Directs the underlying WebDriver to make a request, using the URL defined on the
+	 * given page interface combined with any query args, then returns a object implementing
+	 * the interface that can be used to drive the browser.
 	 * 
+	 * <p>
+	 * The page interface must have a {@link URL} annotation.  The value of this annotation is
+	 * concatenated to the configured base URL in this rule, then the result is used as a format
+	 * string.
 	 * 
-	 * @param pageInterface
-	 * @param queryObjects
-	 * @return
+	 * <p>
+	 * The queryArgs parameter can be a mix of String, Number, and QueryParam objects.  All
+	 * String and Number arguments are passed to the String.format call in the order they appear.
+	 * All QueryParam objects are rendered to the end of the query string for the URL.
+	 * 
+	 * <p>
+	 * it's probably best to not mix the two styles.  this API is under... consideration.  So
+	 * don't expect it to be stable.
+	 * 
 	 */
-	public <T extends Page> T get(final Class<T> pageInterface, final Object...queryObjects) {
+	public <T extends Page> T get(final Class<T> pageInterface, final Object...queryArgs) {
 		
 		assert webDriver != null : "cannot get a page outside of a test";
 		
 		assert pageInterface.getAnnotation(URL.class) != null : "page declarations must have a URL annotation";
 		
-		webDriver.get(makeURL(baseUrl + pageInterface.getAnnotation(URL.class).value(), queryObjects));
+		webDriver.get(makeURL(baseUrl + pageInterface.getAnnotation(URL.class).value(), queryArgs));
 		
 		return injector.getInstance(PanelFactory.class).create(pageInterface);
 	}

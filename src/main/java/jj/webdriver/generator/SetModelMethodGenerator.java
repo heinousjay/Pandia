@@ -73,7 +73,7 @@ class SetModelMethodGenerator extends PanelMethodGenerator {
 			sb.append("byStack = oldByStack;");
 		}
 		
-		generateStandardReturn(newMethod, sb);
+		generateReturn(newMethod, baseMethod, sb);
 		sb.append("}");
 		
 		setBody(newMethod, sb);

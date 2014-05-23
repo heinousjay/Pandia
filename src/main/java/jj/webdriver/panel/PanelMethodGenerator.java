@@ -25,22 +25,78 @@ import jj.webdriver.Page;
 import jj.webdriver.Panel;
 
 /**
+ * Base helper for generating page object methods
+ * 
  * @author jason
  *
  */
 public abstract class PanelMethodGenerator {
 	
 	/**
-	 * 
+	 * The default name for the local variable for the rendered {@link org.openqa.selenium.By}
 	 */
 	protected static final String LOCAL_BY = "localBy";
 
+	/**
+	 * Convenience to compile a {@link Pattern} for a method name that matches
+	 * the given argument followed by one of an uppercase letter, a digit, or a '$'
+	 */
 	protected static final Pattern makeNamePattern(String name) {
-		return Pattern.compile("^" + name + "[A-Z\\d_\\$]");
+		return Pattern.compile("^" + name + "[\\p{javaUpperCase}\\d_\\$]");
 	}
 
+	/**
+	 * determine if the given method can be generated and return true if so. immediately thereafter,
+	 * {@link #generateMethod(CtMethod, CtMethod)} will be called
+	 */
 	protected abstract boolean matches(CtMethod newMethod, CtMethod baseMethod) throws Exception;
 	
+	/**
+	 * <p>
+	 * Override to provide custom generation that fits into the template provided by the supplied
+	 * implementation of {@link #generateMethod(CtMethod, CtMethod)}
+	 * 
+	 * <p>
+	 * This method does nothing by default
+	 */
+	protected void generate(CtMethod newMethod, CtMethod baseMethod, StringBuilder sb) throws Exception {
+		// does nothing by default, since you can override generateMethod and do it all yourself
+	}
+	
+	/**
+	 * Called to produce a method body if the pattern matches.  The method can be overriden if
+	 * necessary.
+	 * 
+	 * <p>
+	 * The default implementation of this method takes the following steps:
+	 * <ol>
+	 * <li>process the By annotation, slicing args using the result of {@link #sliceAt()}
+	 * <li>call {@link #generate(CtMethod, CtMethod, StringBuilder)}
+	 * <li>call {@link #generateReturn(CtMethod, CtMethod, StringBuilder)}
+	 * <li>call {@link #setBody(CtMethod, StringBuilder)}
+	 * </ol>
+	 * 
+	 * @param newMethod
+	 * @param baseMethod
+	 * @throws Exception
+	 */
+	protected void generateMethod(CtMethod newMethod, CtMethod baseMethod) throws Exception {
+		StringBuilder sb = new StringBuilder("{");
+		processBy((By)baseMethod.getAnnotation(By.class), sliceAt(), sb);
+		generate(newMethod, baseMethod, sb);
+		generateReturn(newMethod, baseMethod, sb);
+		sb.append("}");
+		
+		setBody(newMethod, sb);
+	}
+	
+	/**
+	 * <p>
+	 * determines if the given method is annotated with a valid {@link By}
+	 * 
+	 * <p>
+	 * This method throws an AssertionError if an invalid annotation is present.
+	 */
 	protected boolean hasBy(CtMethod baseMethod) throws Exception {
 		return baseMethod.hasAnnotation(By.class) && new ByReader((By)baseMethod.getAnnotation(By.class)) != null;
 	}
@@ -57,62 +113,105 @@ public abstract class PanelMethodGenerator {
 			}
 		}
 		return result;
-		//String name = type.getInterfaces()[0].getName();
-		//return PANEL_CLASS_NAME.equals(name) || PAGE_CLASS_NAME.equals(name);
 	}
 	
-	protected boolean isStandardReturn(CtMethod newMethod) throws Exception {
+	/**
+	 * <p>
+	 * Determines if the given method has a "standard" return value, which is either void, or
+	 * an interface descended from {@link Panel}
+	 */
+	protected final boolean isStandardReturn(CtMethod newMethod) throws Exception {
 		
 		CtClass returnType = newMethod.getReturnType();
 		return returnType.getName().equals("void") || isPanel(returnType);
 	}
 	
-	private boolean isPanel(CtClass type) throws Exception {
-		return hasInterface(type, PANEL_CLASS_NAME);
+	/**
+	 * <p>
+	 * Determines if the given type is an interface descending from {@link Panel}
+	 */
+	protected final boolean isPanel(CtClass type) throws Exception {
+		return type.isInterface() && hasInterface(type, PANEL_CLASS_NAME);
 	}
 	
-	private boolean isPage(CtClass type) throws Exception {
-		return hasInterface(type, PAGE_CLASS_NAME);
+	/**
+	 * <p>
+	 * Determines if the given type is an interface descending from {@link Page}
+	 */
+	protected final boolean isPage(CtClass type) throws Exception {
+		return type.isInterface() && hasInterface(type, PAGE_CLASS_NAME);
 	}
 	
-	protected void generate(CtMethod newMethod, CtMethod baseMethod, StringBuilder sb) throws Exception {
-		// does nothing by default, since you can override generateMethod and do it all yourself
-	}
-	
+	/**
+	 * <p>
+	 * The return value from this method is used in {@link #generateMethod(CtMethod, CtMethod)}
+	 * to determine the slice index for arguments to the method. arguments after the
+	 * slice are used as format args against the ultimate value from the By attribute.
+	 */
 	protected int sliceAt() {
 		return 0;
 	}
 	
-	protected void generateMethod(CtMethod newMethod, CtMethod baseMethod) throws Exception {
-		StringBuilder sb = new StringBuilder("{");
-		processBy((By)baseMethod.getAnnotation(By.class), sliceAt(), sb);
-		generate(newMethod, baseMethod, sb);
-		generateReturn(newMethod, baseMethod, sb);
-		sb.append("}");
-		
-		setBody(newMethod, sb);
-	}
-	
+	/**
+	 * <p>
+	 * Sets the body of the method with the contents of the supplied StringBuffer.  Call
+	 * this instead of doing that directly because this will debug log at some point
+	 */
 	protected void setBody(CtMethod newMethod, StringBuilder sb) throws Exception {
 		// log it! but don't have the right loggers yet
 		newMethod.setBody(sb.toString());
 	}
 	
+	/**
+	 * <p>
+	 * called from {@link #generateMethod(CtMethod, CtMethod)} to create a return statement.
+	 * 
+	 * <p>
+	 * The default implementation generates a "standard" return, which is either void, the
+	 * containing page object, or a new instance of some other page object.
+	 * 
+	 * <p>
+	 * this method asserts that the method being generated has a standard return
+	 * as defined by {@link #isStandardReturn(CtMethod)}
+	 * 
+	 */
 	protected void generateReturn(CtMethod newMethod, CtMethod baseMethod, StringBuilder sb) throws Exception {
-		generateStandardReturn(newMethod, sb);
+
+		assert isStandardReturn(newMethod) : "can only generate standard returns for methods declared with a standard return!";
+		
+		CtClass newClass = newMethod.getDeclaringClass();
+		CtClass returnType = newMethod.getReturnType();
+
+		
+		if (newClass.getInterfaces()[0] == returnType) {
+			sb.append("return this;");
+		} else if (isPanel(returnType)) {
+			sb.append("return makePanel(").append(returnType.getName()).append(".class);");
+		} else if (isPage(returnType)) {
+			sb.append("return navigateTo(").append(returnType.getName()).append(".class);");
+		}
 	}
 	
 	/**
-	 * process the {@link By} annotation into a local variable named by {@link #LOCAL_BY}, without passing
-	 * along the method args as format parameters.
-	 * @param by
-	 * @param sb
+	 * process the {@link By} annotation into a local variable named by {@link #LOCAL_BY},
+	 * using {@link #processBy(By, String, int, StringBuilder)}
 	 */
-	protected void processBy(By by, int sliceArgs, StringBuilder sb) {
+	protected final void processBy(By by, int sliceArgs, StringBuilder sb) {
 		processBy(by, LOCAL_BY, sliceArgs, sb);
 	}
 	
-	protected void processBy(By by, String varName, int sliceArgs, StringBuilder sb) {
+	/**
+	 * processes the {@link By} annotation, if present, into a {@link org.openqa.selenium.By} store in
+	 * the named local variable.  This involves the following steps:
+	 * 
+	 * <ol>
+	 * <li>slice the method arguments at the index provided by sliceArgs, using {@link Arrays#copyOfRange(Object[], int, int)}
+	 * <li>create a {@link org.openqa.selenium.By} using the appropriate type according to {@link ByReader}.
+	 *     if needed, this includes using {@link String#format(String, Object...)} on the annotated value,
+	 *     and resolving the {@link ByStack}.
+	 * </ol>
+	 */
+	protected final void processBy(By by, String varName, int sliceArgs, StringBuilder sb) {
 		
 		if (by != null) {
 			ByReader br = new ByReader(by);
@@ -147,28 +246,23 @@ public abstract class PanelMethodGenerator {
 		}
 	}
 	
-	protected void generateStandardReturn(CtMethod newMethod, StringBuilder sb) throws Exception {
-
-		assert isStandardReturn(newMethod) : "can only generate standard returns for methods declared with a standard return!";
-		
-		CtClass newClass = newMethod.getDeclaringClass();
-		CtClass returnType = newMethod.getReturnType();
-
-		
-		if (newClass.getInterfaces()[0] == returnType) {
-			sb.append("return this;");
-		} else if (isPanel(returnType)) {
-			sb.append("return makePanel(").append(returnType.getName()).append(".class);");
-		} else if (isPage(returnType)) {
-			sb.append("return navigateTo(").append(returnType.getName()).append(".class);");
-		}
-	}
-	
-	protected boolean empty(String string) {
+	/**
+	 * Helper to determine if a String is empty.
+	 */
+	protected final boolean empty(String string) {
 		return string == null || string.isEmpty();
 	}
 
-	protected boolean parametersMatchByAnnotation(int sliceAt, CtMethod newMethod, CtMethod baseMethod) throws Exception {
+	/**
+	 * <p>
+	 * A match helper to determine if the declared arguments sliced at the given slice index are
+	 * valid for use as format arguments with the value of the {@link By} annotation.
+	 * 
+	 * <p>
+	 * This method only accepts <code>String</code> and <code>int</code> arguments for simplicity, although
+	 * the actual format call may allow other arguments
+	 */
+	protected final boolean parametersMatchByAnnotation(int sliceAt, CtMethod newMethod, CtMethod baseMethod) throws Exception {
 		
 		By by = (By)baseMethod.getAnnotation(By.class);
 		

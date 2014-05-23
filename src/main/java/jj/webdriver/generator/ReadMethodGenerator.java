@@ -20,7 +20,6 @@ import java.util.regex.Pattern;
 import javax.inject.Singleton;
 
 import javassist.CtMethod;
-import jj.webdriver.By;
 import jj.webdriver.panel.PanelMethodGenerator;
 
 /**
@@ -39,14 +38,10 @@ class ReadMethodGenerator extends PanelMethodGenerator {
 			parametersMatchByAnnotation(0, newMethod, baseMethod) &&
 			newMethod.getReturnType().getName().equals("java.lang.String");
 	}
-
+	
 	@Override
-	protected void generateMethod(CtMethod newMethod, CtMethod baseMethod) throws Exception {
-		StringBuilder sb = new StringBuilder("{");
-		processBy((By)baseMethod.getAnnotation(By.class), LOCAL_BY, 0, sb);
+	protected void generateReturn(CtMethod newMethod, CtMethod baseMethod, StringBuilder sb) throws Exception {
 		sb.append("return read(").append(LOCAL_BY).append(");");
-		sb.append("}");
-		setBody(newMethod, sb);
 	}
 	
 }

@@ -16,6 +16,7 @@
 package jj.com.google;
 
 import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.*;
 import jj.webdriver.WebDriverRule;
 import jj.webdriver.provider.PhantomJSWebDriverProvider;
 
@@ -39,6 +40,12 @@ public class DriveGoogleABit {
 		
 		driver.takeScreenshot();
 		
+	}
+	
+	@Test
+	public void testURLSubstitution() throws Exception {
+		
+		assertThat(driver.get(Results.class, "selenium").readQuery(), is("selenium"));
 	}
 
 }

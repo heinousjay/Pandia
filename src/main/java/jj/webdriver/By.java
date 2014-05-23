@@ -26,9 +26,8 @@ import java.util.Formatter;
 /**
  * <p>
  * Annotates relevant methods in Panel/Page objects and fields in Model objects
- * to facilitate location of a backing element. Only one attribute should be
- * used in a given declaration.  Doing otherwise is undefined and will probably
- * trip an assertion at some point.
+ * to facilitate location of a backing element. Exactly one attribute must be
+ * used in a given declaration.
  * 
  * <p>
  * The value attribute has special behavior - in nested contexts it will

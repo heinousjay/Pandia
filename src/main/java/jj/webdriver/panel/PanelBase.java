@@ -98,7 +98,9 @@ public abstract class PanelBase implements Page {
 	
 	<T extends Page> T navigateTo(Class<T> pageInterface) {
 		
-		// if the URL doesn't match, log it?
+		// if the URL doesn't match, log it? no reason, really
+		// in fact i think the URL rule might get relaxed, and
+		// the Page/Panel distinction weakened a bit
 		return panelFactory.create(pageInterface);
 	}
 	
@@ -119,7 +121,17 @@ public abstract class PanelBase implements Page {
 	
 	String read(By by) {
 		log("read", by);
-		return find(by).getText();
+		WebElement element = find(by);
+		// does this belong here or should
+		// there be separate generation patterns?
+		switch(element.getTagName()) {
+		
+		case "input":
+			return element.getAttribute("value");
+		
+		default:
+			return element.getText();
+		}
 	}
 	
 	@Override

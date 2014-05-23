@@ -24,9 +24,8 @@ import java.lang.annotation.ElementType;
 /**
  * <p>
  * The URL of the page, relative to the base url defined in the rule,
- * expressed as a format string.
- * 
- * @see {@link WebDriverRule#get(Class, Object...)}
+ * expressed as a format string. See details in
+ * {@link WebDriverRule#get(Class, Object...)}
  * 
  * @author jason
  *

@@ -271,6 +271,7 @@ public class PanelFactoryTest {
 		given(finder.find(webDriver, By.id("test-user-0"))).willReturn(webElement);
 		given(finder.find(webDriver, By.id("test-user-3"))).willReturn(webElement);
 		given(finder.find(webDriver, By.id("test-user-10"))).willReturn(webElement);
+		given(webElement.getTagName()).willReturn("whatever");
 		given(webElement.getText()).willReturn(value1, value2, value3);
 		
 		assertThat(page.testPanel().readUsers(0), is(value1));
