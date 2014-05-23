@@ -29,6 +29,7 @@ class PhantomJSSetupPlugin implements Plugin<Project> {
 		
 		project.afterEvaluate {
 			project.configurations.create('phantomJS')
+			project.configurations.phantomJS.transitive = false
 			project.dependencies.add('phantomJS', "org.jboss.arquillian.extension:arquillian-phantom-binary:1.9.2:${classifier}")
 		
 			project.task('setUpPhantomJS', type:Copy) {
@@ -125,39 +126,40 @@ if (hasProperty('signing.keyId')) {
 			repositories {
 				mavenDeployer {
 					beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-		
+
 					repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
 						authentication(userName: ossrhUsername, password: ossrhPassword)
 					}
-		
+
 					snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
 						authentication(userName: ossrhUsername, password: ossrhPassword)
 					}
-		
+
 					pom.project {
 						name 'Pandia'
 						packaging 'jar'
 						description 'A declarative page object factory for selenium.'
 						url 'https://github.com/heinousjay/Pandia'
-		
+
 						scm {
-							connection 'scm:git:https://github.com/heinousjay/Pandia.git'
+							connection 'scm:git:git@github.com:heinousjay/Pandia.git'
 							developerConnection 'scm:git:git@github.com:heinousjay/Pandia.git'
-							url 'https://github.com/heinousjay/Pandia'
+							url 'git@github.com:heinousjay/Pandia.git'
 						}
-		
+
 						licenses {
 							license {
 								name 'The Apache Software License, Version 2.0'
 								url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
 							}
 						}
-		
+
 						developers {
 							developer {
 								id 'jason'
 								name 'Jason Miller'
 								email 'jay@heinousjay.com'
+								organizationUrl 'https://github.com/heinousjay'
 							}
 						}
 					}
@@ -166,3 +168,5 @@ if (hasProperty('signing.keyId')) {
 		}
 	}
 }
+
+defaultTasks 'build'
