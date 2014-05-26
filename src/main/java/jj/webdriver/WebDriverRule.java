@@ -332,6 +332,10 @@ public class WebDriverRule implements TestRule {
 		return url;
 	}
 	
+	public <T extends Page> T get(final Class<T> pageInterface) {
+		return get(pageInterface, new Object[0]);
+	}
+	
 	/**
 	 * <p>
 	 * Directs the underlying WebDriver to make a request, using the URL defined on the
