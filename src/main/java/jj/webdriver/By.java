@@ -34,8 +34,8 @@ import java.util.Formatter;
  * concatenate with its parent's configured ID, should one exist.  An example
  * will make it clear.  Given the following declarations:
  * 
- * <pre>
- * {@literal @}{@link Model}
+ * <pre class="brush:java">
+ * {@literal @}Model
  * class Login {
  * 	// default By is assumed here as the field name, so nominally:
  * 	// {@literal @}By("username")
@@ -43,7 +43,7 @@ import java.util.Formatter;
  * 	String password;
  * }
  * 
- * interface LoginPanel extends {@link Panel} {
+ * interface LoginPanel extends Panel {
  * 
  * 	{@literal @}By("login:")
  * 	LoginPanel setLoginInformation(Login login);
@@ -51,7 +51,7 @@ import java.util.Formatter;
  * 	// other methods to do other things
  * }
  * 
- * interface IndexPage extends {@link Page} {
+ * interface IndexPage extends Page {
  * 
  * 	{@literal @}By("home:")
  * 	LoginPanel loginPanel();
@@ -60,7 +60,7 @@ import java.util.Formatter;
  * }
  * </pre>
  * 
- * then performing<pre>
+ * then performing<pre class="brush:java">
  * Login login = new Login();
  * login.username = "username";
  * login.password = "password";
@@ -86,8 +86,8 @@ import java.util.Formatter;
  * used for method-specific implementation patterns) will be used to
  * satisfy the flags specified in the attribute, like so:
  * 
- *  <pre>
- *  interface IndexPage extends {@link Page} {
+ *  <pre class="brush:java">
+ *  interface IndexPage extends Page {
  * 
  * 	{@literal @}By("home:%s:")
  * 	LoginPanel loginPanel(String group);
@@ -97,7 +97,7 @@ import java.util.Formatter;
  * 
  * called like
  * 
- * <pre>
+ * <pre class="brush:java">
  * indexPage.loginPanel("group-name");
  * </pre>
  * 
@@ -106,7 +106,7 @@ import java.util.Formatter;
  * values for the various methods in the Panel. Going with the previous
  * example:
  * 
- * <pre>
+ * <pre class="brush:java">
  * Login login = new Login();
  * login.username = "username";
  * login.password = "password";

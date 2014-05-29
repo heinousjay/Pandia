@@ -59,16 +59,16 @@ import com.google.inject.TypeLiteral;
  * purposes
  * 
  * <p>
- * Usage example:<pre>
+ * Usage example:<pre class="brush:java">
  * 
  * public class SomeBrowserDrivenTest {
  * 
- * 	{@literal @}{@link Rule}
+ * 	{@literal @}Rule
  * 	public WebDriverRule webDriverRule = new WebDriverRule()
  * 		.baseUrl(... defaults to "http://localhost:8080" ...)
  * 		.driverProvider(... required! ...);
  * 
- * 	{@literal @}{@link Test}
+ * 	{@literal @}Test
  * 	public void test() {
  * 		SomePage page = webDriverRule.get(SomePage.class);
  * 		// drive the page!

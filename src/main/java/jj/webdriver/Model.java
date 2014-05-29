@@ -30,12 +30,12 @@ import java.lang.annotation.Target;
  * to locate their backing elements in the document if necessary.
  * 
  * <p>
- * Model declarations should be of the form<pre>
+ * Model declarations should be of the form<pre class="brush:java">
  * 
  * {@literal @}Model
  * class UserRegistration {
  * 
- * 	// the model fields are assumed to be {@literal @}{@link By}(fieldName)
+ * 	// the model fields are assumed to be {@literal @}By(fieldName)
  *	// so here it's {@literal @}By("name")
  * 	String name;
  * 
