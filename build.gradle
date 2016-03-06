@@ -6,8 +6,8 @@ apply plugin: 'signing'
 group = 'com.jibbrjabbr'
 version = '0.6-SNAPSHOT'
 
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
+sourceCompatibility = '1.7'
+targetCompatibility = '1.7'
 
 tasks.withType(JavaCompile) {
 	options.encoding = 'UTF-8'
