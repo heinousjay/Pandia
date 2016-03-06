@@ -33,9 +33,9 @@ package jj.webdriver;
  */
 public interface Page extends Panel {
 	
-	/** The current URL of the underlying page */
+	/** @return The current URL of the underlying page */
 	String currentUrl();
 	
-	/** The source of the underlying page */
+	/** @return The source of the underlying page */
 	String pageSource();
 }

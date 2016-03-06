@@ -32,11 +32,9 @@ import jj.webdriver.generator.PanelMethodGeneratorsModule;
 import jj.webdriver.panel.PanelBase;
 import jj.webdriver.panel.PanelFactory;
 import jj.webdriver.panel.URLBase.BaseURL;
-import jj.webdriver.provider.PhantomJSWebDriverProvider;
 
+import jj.webdriver.provider.JBrowserWebDriverProvider;
 import org.apache.commons.codec.binary.Base64;
-import org.junit.Rule;
-import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -89,7 +87,7 @@ public class WebDriverRule implements TestRule {
 	// TODO is it reasonable even having a default here?
 	private String baseUrl = "http://localhost:8080";
 	
-	private Class<? extends WebDriverProvider> webDriverProvider = null;
+	private Class<? extends WebDriverProvider> webDriverProvider = JBrowserWebDriverProvider.class;
 	
 	private Class<? extends WebElementFinder> webElementFinder = ImpatientWebElementFinder.class;
 	
@@ -200,6 +198,10 @@ public class WebDriverRule implements TestRule {
 	 * Configure the base URL for the test run.  URLs are determined with simple
 	 * concatenation - the URL configured for a Page interface is appended to
 	 * the value configured here. Default is "http://localhost:8080"
+	 *
+	 * @param baseUrl The base URL to use
+	 *
+	 * @return the rule being configured
 	 */
 	public WebDriverRule baseUrl(final String baseUrl) {
 		assertUnstarted();
@@ -211,10 +213,14 @@ public class WebDriverRule implements TestRule {
 	/**
 	 * <p>
 	 * Configure the class that provides the {@link WebDriver} implementation for the 
-	 * test run.  Default is {@link PhantomJSWebDriverProvider}.
+	 * test run.  Default is {@link JBrowserWebDriverProvider}.
 	 * 
 	 * <p>
 	 * The provider will be bound as a singleton
+	 *
+	 * @param webDriverProvider the driver provider to configure
+	 *
+	 * @return the rule being configured
 	 */
 	public WebDriverRule driverProvider(Class<? extends WebDriverProvider> webDriverProvider) {
 		assertUnstarted();
@@ -250,9 +256,15 @@ public class WebDriverRule implements TestRule {
 	}
 	
 	/**
+	 * <p>
 	 * Takes a screenshot of the current state of the browser, if possible according to the
 	 * current driver, and stores it in the current directory, which is dependent upon
 	 * test invocation
+	 *
+	 * <p>
+	 * Silently does nothing if the underlying driver does not support screenshots
+	 *
+	 * @throws IOException if unable to take or save the screenshot
 	 */
 	public void takeScreenshot() throws IOException {
 		takeScreenshot(makeScreenShotName("screenshot"));
@@ -265,6 +277,13 @@ public class WebDriverRule implements TestRule {
 	 * 
 	 * <p>
 	 * If the file already exists, it is overwritten
+	 *
+	 * @param screenshotName the file name of the saved screenshot, resolved in the
+	 * configured screenshot directory
+	 *
+	 * @throws IOException if unable to take or save the screenshot
+	 *
+	 * @see #screenShotDir(Path)
 	 */
 	public void takeScreenshot(String screenshotName) throws IOException {
 		
@@ -285,8 +304,12 @@ public class WebDriverRule implements TestRule {
 	 * <pre>
 	 * ${base}-${test class name}.${test method name}[${year}.${month}.${day}.${hour}.${minute}.${second}.${millisecond}].png
 	 * </pre>
+	 *
+	 * @param base as above
+	 *
+	 * @return the result as above
 	 */
-	public String makeScreenShotName(String base) {
+	private String makeScreenShotName(String base) {
 		
 		Calendar now = Calendar.getInstance();
 		
@@ -332,10 +355,6 @@ public class WebDriverRule implements TestRule {
 		return url;
 	}
 	
-	public <T extends Page> T get(final Class<T> pageInterface) {
-		return get(pageInterface, new Object[0]);
-	}
-	
 	/**
 	 * <p>
 	 * Directs the underlying WebDriver to make a request, using the URL defined on the
@@ -355,6 +374,12 @@ public class WebDriverRule implements TestRule {
 	 * <p>
 	 * it's probably best to not mix the two styles.  this API is under... consideration.  So
 	 * don't expect it to be stable.
+	 *
+	 * @param <T> the configuration interface type for the page
+	 * @param pageInterface the configuration interface instance
+	 * @param queryArgs the arguments to the format string created to use as a URL
+	 *
+	 * @return a live {@link Page} instance
 	 * 
 	 */
 	public <T extends Page> T get(final Class<T> pageInterface, final Object...queryArgs) {
@@ -368,6 +393,13 @@ public class WebDriverRule implements TestRule {
 		return injector.getInstance(PanelFactory.class).create(pageInterface);
 	}
 
+	/**
+	 * Configure the rule to take screenshots on error, or not. Default is true
+	 *
+	 * @param screenshotOnError the setting
+	 *
+	 * @return the rule being configured
+	 */
 	public WebDriverRule screenshotOnError(boolean screenshotOnError) {
 		this.screenshotOnError = screenshotOnError;
 		return this;

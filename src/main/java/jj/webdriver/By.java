@@ -129,21 +129,34 @@ import java.util.Formatter;
 @Target({FIELD, METHOD})
 public @interface By {
 
-	/** the DOM ID as hier  */
+	/**
+	 * the DOM ID as hierarchy described above
+	 * @return the value
+	 */
 	String value() default "";
 	
-	/** look up the element by its DOM ID  */
+	/**
+	 * look up the element by its DOM ID
+	 * @return the value
+	 */
 	String id() default "";
 	
-	/** look up the element by a matching class attribute.  only the first element found is used */
+	/**
+	 * look up the element by a matching class attribute.  only the first element found is used
+	 * @return the value
+	 */
 	String className() default "";
 	
 	/** 
 	 * look up the element by a matching css selector.  you are responsible for ensuring this is only
 	 * used with compatible drivers
+	 * @return the value
 	 */
 	String cssSelector() default "";
 	
-	/** look up the element by an xpath expression */
+	/**
+	 * look up the element by an xpath expression
+	 * @return the value
+	 */
 	String xpath() default "";
 }

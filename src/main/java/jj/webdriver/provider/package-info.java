@@ -15,14 +15,7 @@
  */
 /**
  * <p>
- * Simple {@link jj.webdriver.WebDriverProvider} implementations.  Use of
- * {@link jj.webdriver.provider.PhantomJSWebDriverProvider} requires that
- * the phantomjs binary is available and executable, and that the path to
- * the executable is supplied via a system property.
- * 
- * <p>
- * Coming soon, probably, is a Chrome driver provider that works much like
- * the phantomjs driver.
+ * Simple {@link jj.webdriver.WebDriverProvider} implementations.
  * 
  * @author jason
  *

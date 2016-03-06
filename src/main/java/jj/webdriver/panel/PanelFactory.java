@@ -49,15 +49,15 @@ public class PanelFactory {
 	
 	private static final Map<Class<? extends Panel>, Class<? extends Panel>> implementations = new HashMap<>();
 	
-	private static final String INJECT_ANNOTATION = "javax.inject.Inject";
+	private static final String INJECT_ANNOTATION = Inject.class.getCanonicalName();
 	
 	private final ClassPool classPool = ClassPool.getDefault();
 	
-	private final CtClass objectClass = classPool.get("java.lang.Object");
+	private final CtClass objectClass = classPool.get(Object.class.getCanonicalName());
 	
-	private final CtClass panelInterface = classPool.get("jj.webdriver.Panel");
+	private final CtClass panelInterface = classPool.get(Panel.class.getCanonicalName());
 
-	private final CtClass pageInterface = classPool.get("jj.webdriver.Page");
+	private final CtClass pageInterface = classPool.get(Page.class.getCanonicalName());
 	
 	private final CtClass panelBase;
 	
@@ -82,12 +82,21 @@ public class PanelFactory {
 	/**
 	 * creates a page instance by type.  it is expected that the connected browser is already
 	 * on the configured URL, and this might even get asserted!
+	 *
+	 * @param panelInterface
+	 * The interface Class object to use for generation
+	 * @param <T>
+	 * Identifies the Panel type
+	 *
+	 * @return
+	 * a live Panel
 	 */
 	public <T extends Panel> T create(final Class<T> panelInterface) {
 		
 		assert panelInterface != null : "provide a panel interface";
 		assert panelInterface.isInterface() : "panels are produced only from interfaces";
-		assert !Page.class.isAssignableFrom(panelInterface) || panelInterface.isAnnotationPresent(URL.class) : "page interfaces must have URI annotations";
+		assert !Page.class.isAssignableFrom(panelInterface) || panelInterface.isAnnotationPresent(URL.class) :
+			"page interfaces must have URI annotations";
 		
 		try {
 			if (!implementations.containsKey(panelInterface)) {
